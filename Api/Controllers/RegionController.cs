@@ -1,5 +1,6 @@
 ﻿using Api.Dtos.Genre;
 using Api.Dtos.Region;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
 using Api.Repository;
@@ -24,9 +25,9 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var region = await _regionRepository.GetAll();
+            var region = await _regionRepository.GetAll(query);
             var regionMap = _mapper.Map<List<RegionDto>>(region);
 
             return Ok(regionMap);
@@ -47,9 +48,9 @@ namespace Api.Controllers
         }
 
         [HttpGet("MovieSeries/{regionId}")]
-        public async Task<IActionResult> GetSeriesByRegion(int regionId)
+        public async Task<IActionResult> GetSeriesByRegion(int regionId, [FromQuery] QueryObject query)
         {
-            var region = await _regionRepository.GetSeriesByRegion(regionId);
+            var region = await _regionRepository.GetSeriesByRegion(regionId, query);
             if (region == null)
             {
                 return NotFound();
@@ -67,12 +68,10 @@ namespace Api.Controllers
             {
                 return BadRequest();
             }
-
-            var region = await _regionRepository.GetAll();
     
-            var duplicateRegion = region.Any(e => e.Name.Trim().ToUpper() == regionDto.Name.Trim().ToUpper());
+            var duplicateRegion = _regionRepository.RegionExistsName(regionDto.Name);
 
-            if (duplicateRegion)
+            if (duplicateRegion != null)
             {
                 return BadRequest("Region already exsists");
             }

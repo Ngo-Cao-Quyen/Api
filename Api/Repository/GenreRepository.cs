@@ -1,6 +1,8 @@
 ﻿using Api.Data;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Repository
@@ -36,7 +38,7 @@ namespace Api.Repository
             return genre;
         }
 
-        public async Task<List<Genre>> GetAll()
+        public async Task<List<Genre>> GetAll(QueryObject query)
         {
       
             var genres = await _context.Genre.ToListAsync();    
@@ -59,7 +61,7 @@ namespace Api.Repository
         }
 
 
-        public async Task<List<MovieSeries>> GetMovieSeriesByGenre(int genreId)
+        public async Task<List<MovieSeries>> GetMovieSeriesByGenre(int genreId, [FromQuery] QueryObject query)
         {
             return await _context.MovieSeriesGenre.Where(e => e.GenreId == genreId)
                 .Select(e => e.MovieSeries).ToListAsync();
@@ -68,6 +70,11 @@ namespace Api.Repository
         public async Task<bool> GenreExists(int id)
         {
             return await _context.Genre.AllAsync(e => e.Id == id);
+        }
+
+        public async Task<bool> GenreExistsName(string name)
+        {
+            return await _context.Genre.AllAsync(e => e.Name.ToUpper().Trim() == name.ToUpper().Trim());
         }
     }
 }

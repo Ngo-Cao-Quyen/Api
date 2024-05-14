@@ -6,6 +6,8 @@ using Api.Dtos.Region;
 using Api.Dtos.Year;
 using Api.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Api.Helper
 {
@@ -50,8 +52,7 @@ namespace Api.Helper
             CreateMap<Year, UpdateYearDto>();
             CreateMap<UpdateYearDto, Year>();
 
-            CreateMap<Comment, CommentDto>();
-            CreateMap<CommentDto, Comment>();
+           
             CreateMap<Comment, CreateCommentDto>();
             CreateMap<CreateCommentDto, Comment>();
             CreateMap<Comment, UpdateCommentDto>();

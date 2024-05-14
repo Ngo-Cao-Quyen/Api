@@ -1,4 +1,5 @@
 ﻿using Api.Data;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ namespace Api.Repository
             return movieEpisode;
         }
 
-        public async Task<List<MovieEpisode>> GetAll()
+        public async Task<List<MovieEpisode>> GetAll(QueryObject query)
         {
             var movieEpisode = await _context.MovieEpisode.ToListAsync();
             return movieEpisode;
@@ -43,7 +44,7 @@ namespace Api.Repository
 
         public async Task<MovieEpisode> GetById(int id)
         {
-            var movieEpisode = await _context.MovieEpisode.Include(e => e.Comments.Select).FirstOrDefaultAsync(e => e.Id == id);
+            var movieEpisode = await _context.MovieEpisode.Include(e => e.Comments).FirstOrDefaultAsync(e => e.Id == id);
             if (movieEpisode == null)
             {
                 return null;

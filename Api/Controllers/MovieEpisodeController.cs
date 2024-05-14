@@ -1,5 +1,6 @@
 ﻿using Api.Dtos.MovieEpisode;
 using Api.Dtos.MovieSeries;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
 using Api.Repository;
@@ -23,9 +24,9 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var movieEpisode = await _movieEpisodeRepository.GetAll();
+            var movieEpisode = await _movieEpisodeRepository.GetAll(query);
             var movieEpisodeMap = _mapper.Map<List<MovieEpisodeDto>>(movieEpisode);
 
             return Ok(movieEpisodeMap);

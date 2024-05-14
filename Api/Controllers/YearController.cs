@@ -1,5 +1,6 @@
 ﻿using Api.Dtos.Region;
 using Api.Dtos.Year;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
 using Api.Repository;
@@ -24,9 +25,9 @@ namespace Api.Controllers
 
         [HttpGet]
        
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var year = await _yearRepository.GetAll();
+            var year = await _yearRepository.GetAll(query);
             var yearMap = _mapper.Map<List<YearDto>>(year);
 
             return Ok(yearMap);
@@ -46,9 +47,9 @@ namespace Api.Controllers
         }
 
         [HttpGet("MovieSeries/{yearId}")]
-        public async Task<IActionResult> GetSeriesByYear(int yearId)
+        public async Task<IActionResult> GetSeriesByYear(int yearId, [FromQuery] QueryObject query)
         {
-            var year = await _yearRepository.GetSeriesByYear(yearId);
+            var year = await _yearRepository.GetSeriesByYear(yearId, query);
             if (year == null)
             {
                 return NotFound();
@@ -68,11 +69,11 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var year = await _yearRepository.GetAll();
+            
 
-            var duplicateYear = year.Any(e => e.Name == yearDto.Name);
+            var duplicateYear = _yearRepository.YearExistsName(yearDto.Name);
 
-            if (duplicateYear)
+            if (duplicateYear != null)
             {
                 return BadRequest("Year already exists");
             }

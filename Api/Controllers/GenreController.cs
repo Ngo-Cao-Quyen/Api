@@ -1,6 +1,7 @@
 ﻿using Api.Dtos.Genre;
 using Api.Dtos.MovieEpisode;
 using Api.Dtos.MovieSeries;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
 using Api.Repository;
@@ -28,9 +29,9 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult>GetAll()
+        public async Task<IActionResult>GetAll([FromQuery] QueryObject query)
         { 
-            var genre = await _genreRepository.GetAll();
+            var genre = await _genreRepository.GetAll(query);
            
             var genreMap = _mapper.Map<List<GenreDto>>(genre);    
 
@@ -51,9 +52,9 @@ namespace Api.Controllers
         }
 
         [HttpGet("movieSeries/{genreId}")]
-        public async Task<IActionResult> GetMovieSeriesByGenre(int genreId)
+        public async Task<IActionResult> GetMovieSeriesByGenre(int genreId, [FromQuery] QueryObject query)
         {
-            var movieSeries = await _genreRepository.GetMovieSeriesByGenre(genreId);
+            var movieSeries = await _genreRepository.GetMovieSeriesByGenre(genreId, query);
 
             var movieSeriesMap = _mapper.Map<List<MovieSeriesDto>>(movieSeries);
 
@@ -68,9 +69,9 @@ namespace Api.Controllers
             {
                 return BadRequest();
             }
-            var genre = await _genreRepository.GetAll();
-            var dulicateGenre = genre.Any(e => e.Name.Trim().ToUpper() ==  genreDto.Name.Trim().ToUpper());
-            if (dulicateGenre)
+            
+            var dulicateGenre = _genreRepository.GenreExistsName(genreDto.Name);
+            if (dulicateGenre != null)
             {
                 return BadRequest("Genre already exists");
             }

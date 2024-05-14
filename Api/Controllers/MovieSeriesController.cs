@@ -10,6 +10,7 @@ using Api.Dtos.Region;
 using Api.Dtos.Comment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Api.Helpers;
 
 namespace Api.Controllers
 {
@@ -18,6 +19,7 @@ namespace Api.Controllers
     public class MovieSeriesController : Controller
     {
         private readonly IMovieSeriesRepository _movieSeriesRepository;
+        private readonly IMovieEpisodeRepository _movieEpisodeRepository;
         private readonly IRegionRepository _regionRepository;
         private readonly IYearRepository _yearRepository;
         private readonly IGenreRepository _genreRepository;
@@ -33,16 +35,29 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var movieSeries = await _movieSeriesRepository.GetAll();
-
-            var movieSeriesMap = _mapper.Map<List<MovieSeriesDto>>(movieSeries);
+            var movieSeries = await _movieSeriesRepository.GetAll(query);
+            _movieSeriesRepository.CalculateTotalView(movieSeries);
             
+            var movieSeriesMap = _mapper.Map<List<MovieSeriesDto>>(movieSeries);
 
-            return Ok(movieSeriesMap);
+            var movieSeriesDto = movieSeries.Select(e => new MovieSeriesDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                PosterPath = e.PosterPath,
+                TotalEpisode = e.TotalEpisode,
+                TotalNumberofViewers = e.TotalNumberofViewers,
+                RegionId = e.RegionId,
+                YearId = e.YearId,
+                GenreIds = e.GenreIds,
+            });
 
-        }
+            return Ok(movieSeriesDto);
+
+        }      
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
@@ -52,14 +67,28 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
-
+            movieSeries.TotalNumberofViewers = movieSeries.Episodes.Sum(e => e.NumberofViewers);
             var movieSeriesMap = _mapper.Map<MovieSeriesDto>(movieSeries);
 
             return Ok(movieSeriesMap);
 
         }
 
-        [HttpGet("MovieEpisode/{seriesId}")]
+        [HttpGet("name")]
+        public async Task<IActionResult> GetByName(string name)
+        {
+            var movieSeries = await _movieSeriesRepository.GetByName(name);
+            foreach (var series in movieSeries)
+            {
+                series.TotalNumberofViewers = series.Episodes.Sum(e => e.NumberofViewers);
+            }
+            var movieSeriesMap = _mapper.Map<List<MovieSeriesDto>>(movieSeries);
+
+            return Ok(movieSeriesMap);
+
+        }
+
+       /* [HttpGet("MovieEpisode/{seriesId}")]
         public async Task<IActionResult> GetEpisodeBySeriesId(int seriesId)
         {
             var movieSeries = await _movieSeriesRepository.GetEpisodeBySeriesId(seriesId);
@@ -67,11 +96,12 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
+            
             var movieSeriesMap = _mapper.Map<MovieSeriesDto>(movieSeries);
 
             return Ok(movieSeriesMap);
 
-        }
+        }*/
         
         [HttpPost]
         public async Task<IActionResult> Create([FromForm]CreateMovieSeriesDto movieSeriesDto)
@@ -82,9 +112,9 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var movieSeries = await _movieSeriesRepository.GetAll();
+            var duplicateMovieSeries = await _movieSeriesRepository.MovieSeriesExistsName(movieSeriesDto.Name);
 
-            var duplicateMovieSeries = movieSeries.Any(e => e.Name.Trim().ToUpper() == movieSeriesDto.Name.Trim().ToUpper());
+            /*var duplicateMovieSeries = movieSeries.Any(e => e.Name.Trim().ToUpper() == movieSeriesDto.Name.Trim().ToUpper());*/
 
             if (duplicateMovieSeries)
             {
@@ -135,7 +165,7 @@ namespace Api.Controllers
             var movieSeries = await _movieSeriesRepository.GetById(id);
             await _movieSeriesRepository.DeleteAsync(movieSeries);
             return Ok("Delete successfully");
-        }
+        }       
 
     }
 }

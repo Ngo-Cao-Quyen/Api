@@ -1,6 +1,8 @@
 ﻿using Api.Data;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Repository
@@ -33,7 +35,7 @@ namespace Api.Repository
             await _context.SaveChangesAsync();
             return year;
         }
-        public async Task<List<Year>> GetAll()
+        public async Task<List<Year>> GetAll(QueryObject query)
         {
             var year = await _context.Year.ToListAsync();
             return year;
@@ -48,13 +50,18 @@ namespace Api.Repository
         {
             throw new NotImplementedException();
         }
-        public async Task<Year>GetSeriesByYear(int yearId)
+        public async Task<Year>GetSeriesByYear(int yearId, [FromQuery] QueryObject query)
         {
             return await _context.Year.Include(e => e.Series).FirstOrDefaultAsync(e => e.Id == yearId);
         }
         public async Task<bool> YearExists(int id)
         {
             return await _context.Year.AnyAsync(e => e.Id == id);
+        }
+
+        public async Task<bool> YearExistsName(int name)
+        {
+            return await _context.Year.AnyAsync(e => e.Name == name);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Api.Data;
+using Api.Helpers;
 using Api.Interfaces;
 using Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ namespace Api.Repository
             _context = context;
         }
 
-        public async Task<List<Comment>>GetAll()
+        public async Task<List<Comment>>GetAll(QueryObject query)
         {
-            return await _context.Comment.ToListAsync();
+            return await _context.Comment.Include(e => e.AppUser).ToListAsync();
         }
 
         public async Task<Comment>GetById(int id)

@@ -2,7 +2,9 @@
 using Api.Dtos.Genre;
 using Api.Dtos.MovieSeries;
 using Api.Extensions;
+using Api.Helpers;
 using Api.Interfaces;
+using Api.Mappers;
 using Api.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -32,12 +34,12 @@ namespace Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var comment = await _commentRepository.GetAll();
+            var comment = await _commentRepository.GetAll(query);
 
-            var commentMap = _mapper.Map<List<CommentDto>>(comment);
-
+            var commentMap = comment.Select(e => e.ToCommentDto());
+            
             return Ok(commentMap);
         }
 
@@ -68,6 +70,7 @@ namespace Api.Controllers
             var commentMap = _mapper.Map<Comment>(commentDto);
             commentMap.AppUserId = appUser.Id;
             
+
             await _commentRepository.CreateAsync(commentMap);
 
             return CreatedAtAction(nameof(GetById), new { id = commentMap.Id }, new {commentMap.Id, commentMap.Title, commentMap.Content, commentMap.AppUserId});
