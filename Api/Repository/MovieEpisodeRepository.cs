@@ -44,7 +44,7 @@ namespace Api.Repository
 
         public async Task<MovieEpisode> GetById(int id)
         {
-            var movieEpisode = await _context.MovieEpisode.Include(e => e.Comments).FirstOrDefaultAsync(e => e.Id == id);
+            var movieEpisode = await _context.MovieEpisode.Include(e => e.Comments).Include(e => e.Reactions).FirstOrDefaultAsync(e => e.Id == id);
             if (movieEpisode == null)
             {
                 return null;

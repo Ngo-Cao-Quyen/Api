@@ -7,6 +7,7 @@ using Api.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Api.Controllers
@@ -15,11 +16,13 @@ namespace Api.Controllers
     [ApiController]
     public class MovieEpisodeController : Controller
     {
+
         private readonly IMovieEpisodeRepository _movieEpisodeRepository;
         private readonly IMapper _mapper;
         public MovieEpisodeController(IMovieEpisodeRepository movieEpisodeRepository, IMapper mapper)
         {
             _movieEpisodeRepository = movieEpisodeRepository;
+
             _mapper = mapper;
         }
 
@@ -42,6 +45,7 @@ namespace Api.Controllers
             }
             await _movieEpisodeRepository.UpdateViewCountAsync(id);
             var movieEpisodeMap = _mapper.Map<MovieEpisodeDto>(movieEpisode);
+            
 
             return Ok(movieEpisodeMap);
         }

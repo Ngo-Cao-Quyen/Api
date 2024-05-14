@@ -16,5 +16,6 @@ namespace Api.Models
         public MovieSeries MovieSeries { get; set; }
 
         public List<Comment> Comments { get; set; } = new List<Comment>();
+        public List<Reaction> Reactions { get; set; } = new List<Reaction>();
     }
 }

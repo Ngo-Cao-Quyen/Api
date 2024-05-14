@@ -4,6 +4,7 @@ using Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    partial class MovieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240514100231_addReaction")]
+    partial class addReaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,10 +106,6 @@ namespace Api.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -512,7 +511,7 @@ namespace Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Api.Models.MovieEpisode", "MovieEpisode")
-                        .WithMany("Reactions")
+                        .WithMany()
                         .HasForeignKey("MovieEpisodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -581,8 +580,6 @@ namespace Api.Migrations
             modelBuilder.Entity("Api.Models.MovieEpisode", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Reactions");
                 });
 
             modelBuilder.Entity("Api.Models.MovieSeries", b =>

@@ -4,6 +4,7 @@ using Api.Dtos.MovieEpisode;
 using Api.Dtos.MovieSeries;
 using Api.Dtos.Region;
 using Api.Dtos.Year;
+using Api.Dtos.Reaction;
 using Api.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -52,11 +53,15 @@ namespace Api.Helper
             CreateMap<Year, UpdateYearDto>();
             CreateMap<UpdateYearDto, Year>();
 
-           
+            CreateMap<Comment, CommentDto>();
+            CreateMap<CommentDto, Comment>();
             CreateMap<Comment, CreateCommentDto>();
             CreateMap<CreateCommentDto, Comment>();
             CreateMap<Comment, UpdateCommentDto>();
             CreateMap<UpdateCommentDto, Comment>();
+
+            CreateMap<Reaction, ReactionDto>();
+            CreateMap<ReactionDto, Reaction>();
         }
     }
 }

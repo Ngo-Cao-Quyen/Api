@@ -9,7 +9,7 @@ namespace Api.Dtos.Comment
     {
         public int Id { get; set; }
         public string AppUserId { get; set; }
-        public string CreatedBy { get; set; }
+        public string CreateBy { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;

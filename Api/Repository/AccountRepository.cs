@@ -30,7 +30,7 @@ namespace Api.Repository
                 Name = registerDto.Name,
                 Email = registerDto.Email,
                 PasswordHash = registerDto.Password,
-                UserName = registerDto.Email
+                UserName = registerDto.Email,
             };
             var user = await _userManager.FindByEmailAsync(newUser.Email);
             if (user != null) return new GeneralResponse(false, "User registered already");
@@ -39,6 +39,7 @@ namespace Api.Repository
             if (!createUser.Succeeded) return new GeneralResponse(false, "Error occured.. please try again");
 
             //Assign Default Role : Admin to first registrar; rest is user
+            var role = await _userManager.GetRolesAsync(newUser);
             var checkAdmin = await _roleManager.FindByNameAsync("Admin");
             if (checkAdmin == null)
             {

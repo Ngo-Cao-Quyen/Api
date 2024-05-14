@@ -1,5 +1,6 @@
 ﻿
 using Api.Dtos.Comment;
+using Api.Dtos.Reaction;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -17,5 +18,6 @@ namespace Api.Dtos.MovieEpisode
         public int MovieSeriesId { get; set; }
 
         public List<CommentDto>Comments { get; set; }
+        public List<ReactionDto>Reactions { get; set; }
     }
 }

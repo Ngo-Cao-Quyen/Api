@@ -16,6 +16,7 @@ namespace Api.Data
         public DbSet<Region> Region { get; set; }
         public DbSet<Year> Year { get; set; }
         public DbSet<Comment> Comment { get; set; }
+        public DbSet<Reaction> Reaction { get; set; }
         public DbSet<MovieSeriesGenre>MovieSeriesGenre { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,7 +32,8 @@ namespace Api.Data
              modelBuilder.Entity<Genre>()
                   .HasMany(x => x.MovieSeriesGenres)
                   .WithOne(x => x.Genre);*/
-           
+
+
         }
     }
 }

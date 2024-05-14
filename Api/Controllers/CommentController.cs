@@ -4,7 +4,6 @@ using Api.Dtos.MovieSeries;
 using Api.Extensions;
 using Api.Helpers;
 using Api.Interfaces;
-using Api.Mappers;
 using Api.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +37,7 @@ namespace Api.Controllers
         {
             var comment = await _commentRepository.GetAll(query);
 
-            var commentMap = comment.Select(e => e.ToCommentDto());
+            var commentMap = _mapper.Map<List<CommentDto>>(comment);
             
             return Ok(commentMap);
         }
@@ -46,14 +45,14 @@ namespace Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var genre = await _commentRepository.GetById(id);
-            if (genre == null)
+            var comment = await _commentRepository.GetById(id);
+            if (comment == null)
             {
                 return null;
             }
-            var genreMap = _mapper.Map<GenreDto>(genre);
+            var commentMap = _mapper.Map<CommentDto>(comment);
 
-            return Ok(genreMap);
+            return Ok(commentMap);
         }
 
         
@@ -69,11 +68,11 @@ namespace Api.Controllers
 
             var commentMap = _mapper.Map<Comment>(commentDto);
             commentMap.AppUserId = appUser.Id;
+            commentMap.CreateBy = appUser.Email;
             
-
             await _commentRepository.CreateAsync(commentMap);
 
-            return CreatedAtAction(nameof(GetById), new { id = commentMap.Id }, new {commentMap.Id, commentMap.Title, commentMap.Content, commentMap.AppUserId});
+            return CreatedAtAction(nameof(GetById), new { id = commentMap.Id }, new {commentMap.Id, commentMap.Title, commentMap.Content, commentMap.AppUserId, commentMap.CreateBy});
         }
 
         

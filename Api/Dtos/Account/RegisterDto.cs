@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Api.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Api.Dtos.Account
 {
