@@ -69,9 +69,9 @@ namespace Api.Controllers
                 return BadRequest();
             }
     
-            var duplicateRegion = _regionRepository.RegionExistsName(regionDto.Name);
+            var duplicateRegion = await _regionRepository.RegionExistsName(regionDto.Name);
 
-            if (duplicateRegion != null)
+            if (duplicateRegion)
             {
                 return BadRequest("Region already exsists");
             }

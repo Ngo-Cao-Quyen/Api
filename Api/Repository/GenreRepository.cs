@@ -4,6 +4,7 @@ using Api.Interfaces;
 using Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Api.Repository
 {
@@ -69,12 +70,12 @@ namespace Api.Repository
 
         public async Task<bool> GenreExists(int id)
         {
-            return await _context.Genre.AllAsync(e => e.Id == id);
+            return await _context.Genre.AnyAsync(e => e.Id == id);
         }
 
         public async Task<bool> GenreExistsName(string name)
         {
-            return await _context.Genre.AllAsync(e => e.Name.ToUpper().Trim() == name.ToUpper().Trim());
+            return await _context.Genre.AnyAsync(e => e.Name.ToUpper().Trim() == name.ToUpper().Trim());
         }
     }
 }

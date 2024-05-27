@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,13 @@ builder.Services.AddControllers();
 /*builder.Services.AddControllers().AddNewtonsoftJson(option =>
         option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );*/
+
+// JSon Serializer
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore).AddNewtonsoftJson(
+        options => options.SerializerSettings.ContractResolver = new DefaultContractResolver() 
+);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -116,9 +124,7 @@ app.UseHttpsRedirection();
 app.UseCors(e => e
     .AllowAnyMethod()
     .AllowAnyHeader()
-    .AllowCredentials()
-    .WithHeaders(HeaderNames.ContentType)
-    .SetIsOriginAllowed(origin => true));
+    .AllowAnyOrigin());
 
 app.UseAuthentication();
 app.UseAuthorization();

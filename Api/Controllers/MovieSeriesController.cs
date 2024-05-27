@@ -42,7 +42,7 @@ namespace Api.Controllers
             
             var movieSeriesMap = _mapper.Map<List<MovieSeriesDto>>(movieSeries);
 
-            var movieSeriesDto = movieSeries.Select(e => new MovieSeriesDto
+            /*var movieSeriesDto = movieSeriesMap.Select(e => new MovieSeriesDto
             {
                 Id = e.Id,
                 Name = e.Name,
@@ -53,9 +53,9 @@ namespace Api.Controllers
                 RegionId = e.RegionId,
                 YearId = e.YearId,
                 GenreIds = e.GenreIds,
-            });
+            });*/
 
-            return Ok(movieSeriesDto);
+            return Ok(movieSeriesMap);
 
         }      
 

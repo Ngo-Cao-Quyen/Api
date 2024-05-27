@@ -61,7 +61,7 @@ namespace Api.Repository
 
         public async Task<bool> YearExistsName(int name)
         {
-            return await _context.Year.AnyAsync(e => e.Name == name);
+            return await _context.Year.AnyAsync(e => e.Name.ToString().ToUpper().Trim() == name.ToString().ToUpper().Trim());
         }
     }
 }

@@ -69,13 +69,15 @@ namespace Api.Controllers
             {
                 return BadRequest();
             }
-            
-            var dulicateGenre = _genreRepository.GenreExistsName(genreDto.Name);
-            if (dulicateGenre != null)
+
+            var dulicateGenre = await _genreRepository.GenreExistsName(genreDto.Name);
+            if (dulicateGenre)
             {
                 return BadRequest("Genre already exists");
             }
+
             var genreMap = _mapper.Map<Genre>(genreDto);
+            
             await _genreRepository.CreateAsync(genreMap);
 
             return CreatedAtAction(nameof(GetById), new {id = genreMap.Id}, genreMap);          

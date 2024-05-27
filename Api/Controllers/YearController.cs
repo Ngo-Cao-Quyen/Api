@@ -69,11 +69,9 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            
+            var duplicateYear = await _yearRepository.YearExistsName(yearDto.Name);
 
-            var duplicateYear = _yearRepository.YearExistsName(yearDto.Name);
-
-            if (duplicateYear != null)
+            if (duplicateYear)
             {
                 return BadRequest("Year already exists");
             }
