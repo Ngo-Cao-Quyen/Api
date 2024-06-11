@@ -56,6 +56,13 @@ namespace Api.Repository
 
        public async Task<MovieSeries>CreateAsync(MovieSeries movieSeries)
         {
+            foreach (var genreId in movieSeries.GenreIds)
+            {
+                movieSeries.MovieSeriesGenres.Add(new MovieSeriesGenre
+                {
+                    GenreId = genreId,
+                });
+            }
             await _context.MovieSeries.AddAsync(movieSeries);
             await _context.SaveChangesAsync();
             return movieSeries;
@@ -109,8 +116,7 @@ namespace Api.Repository
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await fileImage.CopyToAsync(stream);
-            }
-            
+            }          
             return fileName;
         }
 

@@ -40,23 +40,8 @@ namespace Api.Controllers
             var movieSeries = await _movieSeriesRepository.GetAll(query);
             _movieSeriesRepository.CalculateTotalView(movieSeries);
             
-            var movieSeriesMap = _mapper.Map<List<MovieSeriesDto>>(movieSeries);
-
-            /*var movieSeriesDto = movieSeriesMap.Select(e => new MovieSeriesDto
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                PosterPath = e.PosterPath,
-                TotalEpisode = e.TotalEpisode,
-                TotalNumberofViewers = e.TotalNumberofViewers,
-                RegionId = e.RegionId,
-                YearId = e.YearId,
-                GenreIds = e.GenreIds,
-            });*/
-
+            var movieSeriesMap = _mapper.Map<List<MovieSeriesDto>>(movieSeries);         
             return Ok(movieSeriesMap);
-
         }      
 
         [HttpGet("{id:int}")]
@@ -71,7 +56,6 @@ namespace Api.Controllers
             var movieSeriesMap = _mapper.Map<MovieSeriesDto>(movieSeries);
 
             return Ok(movieSeriesMap);
-
         }
 
         [HttpGet("name")]
@@ -105,8 +89,7 @@ namespace Api.Controllers
         
         [HttpPost]
         public async Task<IActionResult> Create([FromForm]CreateMovieSeriesDto movieSeriesDto)
-        {
-            
+        {         
             if (movieSeriesDto == null)
             {
                 return BadRequest();
@@ -114,29 +97,17 @@ namespace Api.Controllers
 
             var duplicateMovieSeries = await _movieSeriesRepository.MovieSeriesExistsName(movieSeriesDto.Name);
 
-            /*var duplicateMovieSeries = movieSeries.Any(e => e.Name.Trim().ToUpper() == movieSeriesDto.Name.Trim().ToUpper());*/
-
             if (duplicateMovieSeries)
             {
                 return BadRequest("Movie Series already exsists");
             }
             var movieSeriesMap = _mapper.Map<MovieSeries>(movieSeriesDto);
 
-            foreach (var genreId in movieSeriesDto.GenreIds)
-            {
-                movieSeriesMap.MovieSeriesGenres.Add(new MovieSeriesGenre
-                {
-                    GenreId = genreId,
-                });
-
-            }
-
             movieSeriesMap.PosterPath = await _movieSeriesRepository.SaveImageAsync(movieSeriesDto.ImageFile);          
 
             await _movieSeriesRepository.CreateAsync(movieSeriesMap);
             
             return CreatedAtAction(nameof(GetById), new { id = movieSeriesMap.Id }, movieSeriesDto);
-
         }
 
         
@@ -155,7 +126,6 @@ namespace Api.Controllers
             await _movieSeriesRepository.UpdateAsync(series);
 
             return Ok(movieSeriesMap);
-
         }
 
         
@@ -166,6 +136,5 @@ namespace Api.Controllers
             await _movieSeriesRepository.DeleteAsync(movieSeries);
             return Ok("Delete successfully");
         }       
-
     }
 }
